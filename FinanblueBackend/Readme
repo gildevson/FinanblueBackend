@@ -1,0 +1,370 @@
+### Nesse caso vou usar Dapper como orm por questões de projetos da Finanblue.
+
+
+Primeira que tenho que temos que colocar na cabeça 
+
+### Model ou Entidade
+
+é representada como os dados do sistema.
+
+Reflete uma tabela do Banco de dados ou um objeto real(ex:Usuario, Produto, Cliente, Pedido);
+
+Função 
+
+Guardar as propriedades e tipos de dados que o sistema usa.
+
+
+Exemplo seria 
+
+
+public class Usuario 
+{
+	public int ID {get; set}
+	public string Nome {get; set}
+	public string Email {};
+
+}
+
+Database
+?? O que é:
+
+É a camada que faz a conexão direta com o banco de dados.
+No seu caso, com o Dapper, ela serve para abrir conexões e executar queries.
+
+?? Função:
+
+Gerenciar a conexão (abrir/fechar);
+
+Centralizar a string de conexão;
+
+Evitar repetir código SQL em vários lugares.
+
+using System.Data;
+using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+
+public class DbContextDapper
+{
+    private readonly IConfiguration _config;
+    private readonly string _connectionString;
+
+    public DbContextDapper(IConfiguration config)
+    {
+        _config = config;
+        _connectionString = _config.GetConnectionString("DefaultConnection");
+    }
+
+    public IDbConnection CreateConnection()
+    {
+        return new SqlConnection(_connectionString);
+    }
+}
+
+
+### Repository(Repository) 
+
+É a camada responsavel de conversa com Banco de dados
+
+Ela utiliza DbContextDapper para exercutar comando SQL
+
+
+Função 
+
+Função select, insert, update, e delete;
+
+Converter os resultado sql em objetos model;
+
+using Dapper;
+
+public class UsuarioRepository
+{
+    private readonly DbContextDapper _context;
+
+    public UsuarioRepository(DbContextDapper context)
+    {
+        _context = context;
+    }
+
+    public IEnumerable<Usuario> GetUsuarios()
+    {
+        using var connection = _context.CreateConnection();
+        return connection.Query<Usuario>("SELECT * FROM Usuarios");
+    }
+
+    public int AddUsuario(Usuario user)
+    {
+        using var connection = _context.CreateConnection();
+        string sql = "INSERT INTO Usuarios (Nome, Email) VALUES (@Nome, @Email)";
+        return connection.Execute(sql, user);
+    }
+}
+
+
+### Service 
+
+Service é a camada responsavel intermediária entre Controller é o repository 
+
+Função 
+
+- Validar dados.
+- Processadores regras(calcular, verificar duplicidades(Duplicatos) ).
+- Chamar o repository.
+- Garantir que é Controller só lhe requisições, não com logicas não pesadas.
+
+
+
+
+public class UsuarioService
+{
+    private readonly UsuarioRepository _repository;
+
+    public UsuarioService(UsuarioRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public IEnumerable<Usuario> ListarUsuarios()
+    {
+        return _repository.GetUsuarios();
+    }
+
+    public string CadastrarUsuario(Usuario user)
+    {
+        if (string.IsNullOrEmpty(user.Email))
+            throw new Exception("Email é obrigatório!");
+
+        _repository.AddUsuario(user);
+        return "Usuário cadastrado com sucesso!";
+    }
+}
+
+
+
+### Controller 
+
+
+O que é 
+
+é o ponto de entrada de Api - Recebe requisições HTTP do frontend (Angula) e retorna respostas.
+
+
+Função 
+- Recebe e responde as requições da WEB (get, post, put, DELETE)
+- chama o service
+- retorna resultado geralmente em json
+
+
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsuarioController : ControllerBase
+{
+    private readonly UsuarioService _service;
+
+    public UsuarioController(UsuarioService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet]
+    public IActionResult GetUsuarios()
+    {
+        var usuarios = _service.ListarUsuarios();
+        return Ok(usuarios);
+    }
+
+    [HttpPost]
+    public IActionResult AddUsuario([FromBody] Usuario user)
+    {
+        var msg = _service.CadastrarUsuario(user);
+        return Ok(msg);
+    }
+}
+
+
+
+[ Angular / Frontend ]
+          ?
+[ Controller ]  ? recebe a requisição HTTP
+          ?
+[ Service ]  ? regras de negócio, validações
+          ?
+[ Repository ]  ? executa SQL no banco
+          ?
+[ Database ]  ? cria e gerencia a conexão
+          ?
+[ Model ]  ? estrutura dos dados
+
+
+
+####################################################################################
+
+
+FinanblueBackend/
+?
+??? Connected Services/
+??? Dependencies/
+??? Properties/
+??? wwwroot/
+??? Pages/
+??? appsettings.json
+??? Program.cs
+??? Readme
+
+
+
+1. Connected Services
+
+Essa seção serve para integrar o seu projeto com serviços externos, como:
+
+Azure (armazenamento, funções, SQL, etc.);
+
+APIs de terceiros;
+
+Entity Framework ou outros ORMs (quando você adiciona via assistente);
+
+Autenticação externa (ex: Microsoft Identity, OAuth).
+
+?? No seu caso, como você vai usar Dapper, geralmente não precisa adicionar nada aqui.
+
+
+?? 2. Dependencies
+
+Aqui ficam todas as dependências (bibliotecas) que o seu projeto usa.
+Elas são os “pacotes NuGet” — equivalentes aos “npm packages” no Node.js.
+
+Exemplos que podem aparecer:
+
+Microsoft.AspNetCore.* ? fornece recursos do ASP.NET.
+
+Dapper ? ORM leve para manipular SQL.
+
+System.Data.SqlClient ? conecta ao SQL Server.
+
+Swashbuckle.AspNetCore ? gera documentação Swagger.
+
+?? Você pode clicar com o botão direito ? “Gerenciar Pacotes NuGet” para instalar novas dependências.
+
+
+3. Properties
+
+Contém configurações do projeto.
+O principal arquivo aqui é o launchSettings.json, que define como a aplicação será executada durante o desenvolvimento.
+
+
+{
+  "profiles": {
+    "FinanblueBackend": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:7083;http://localhost:5189",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+
+
+
+?? 4. wwwroot/
+
+
+Essa pasta guarda arquivos estáticos públicos:
+
+Imagens, CSS, JS, PDFs etc.
+
+É útil se o seu backend também servir algum conteúdo web direto (como páginas HTML ou dashboards).
+Numa API pura (como a que vai falar com o Angular), geralmente fica vazia.
+
+
+5. Pages/
+
+
+Essa pasta aparece quando o projeto foi criado com o modelo de Razor Pages (páginas web dinâmicas).
+Como o seu foco é uma API REST, você não precisa dessa pasta — pode até remover mais tarde.
+
+?? Ela só é usada se você estiver criando uma aplicação web que renderiza HTML pelo servidor (ex: ASP.NET MVC).
+
+
+?? 6. appsettings.json
+
+Esse é o arquivo de configuração principal do projeto.
+Aqui ficam:
+
+Strings de conexão com o banco de dados;
+
+Configurações gerais da aplicação;
+
+Variáveis de ambiente.
+
+Exemplo:
+
+
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=FinanblueDB;User Id=sa;Password=1234;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  },
+  "AllowedHosts": "*"
+}
+
+
+Ele é o equivalente ao .env de um projeto Node.js.
+Você vai ler essas configurações com o IConfiguration dentro do seu código.
+
+
+?? 7. Program.cs
+
+Esse é o arquivo principal da aplicação (ponto de entrada).
+É aqui que o servidor é iniciado e as rotas (controllers) são registradas.
+
+Ele configura:
+
+CORS (para o Angular acessar);
+
+Injeção de dependência (Repository, Service);
+
+Rotas (MapControllers);
+
+Logs e middlewares.
+
+Exemplo básico:
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configura serviços
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configura o pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+
+
+Pasta / Arquivo	Função Principal
+Connected Services	Conectar a serviços externos (Azure, APIs, etc).
+Dependencies	Bibliotecas NuGet que o projeto usa.
+Properties	Configuração de execução (porta, ambiente, etc).
+wwwroot	Arquivos estáticos (imagens, CSS, JS).
+Pages	Páginas Razor (caso use interface MVC).
+appsettings.json	Configurações e conexões do sistema.
+Program.cs	Ponto de entrada e configuração do servidor.
+Readme	Documentação do projet
