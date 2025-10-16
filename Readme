@@ -1,44 +1,44 @@
-### Nesse caso vou usar Dapper como orm por questões de projetos da Finanblue.
+# ?? FinanblueBackend
 
+Projeto backend desenvolvido em **C# (.NET 8)** utilizando **Dapper** como ORM, por questões de padronização dos projetos da **Finanblue**.
 
-Primeira que tenho que temos que colocar na cabeça 
+---
 
-### Model ou Entidade
+## ?? Estrutura de Camadas do Projeto
 
-é representada como os dados do sistema.
+### ?? Model (ou Entidade)
 
-Reflete uma tabela do Banco de dados ou um objeto real(ex:Usuario, Produto, Cliente, Pedido);
+**O que é:**  
+Representa os dados do sistema. Reflete uma tabela do banco de dados ou um objeto real (ex: Usuário, Produto, Cliente, Pedido).
 
-Função 
-
+**Função:**  
 Guardar as propriedades e tipos de dados que o sistema usa.
 
-
-Exemplo seria 
-
-
+**Exemplo:**
+```csharp
 public class Usuario 
 {
-	public int ID {get; set}
-	public string Nome {get; set}
-	public string Email {};
-
+    public int Id { get; set; }
+    public string Nome { get; set; }
+    public string Email { get; set; }
 }
-
-Database
-?? O que é:
-
+??? Database
+O que é:
 É a camada que faz a conexão direta com o banco de dados.
-No seu caso, com o Dapper, ela serve para abrir conexões e executar queries.
+Com o Dapper, ela serve para abrir conexões e executar queries.
 
-?? Função:
+Função:
 
-Gerenciar a conexão (abrir/fechar);
+Gerenciar a conexão (abrir/fechar)
 
-Centralizar a string de conexão;
+Centralizar a string de conexão
 
-Evitar repetir código SQL em vários lugares.
+Evitar repetição de código SQL
 
+Exemplo:
+
+csharp
+Copiar código
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -59,21 +59,23 @@ public class DbContextDapper
         return new SqlConnection(_connectionString);
     }
 }
+?? Repository
+O que é:
+Camada responsável por conversar com o banco de dados.
+Ela utiliza o DbContextDapper para executar comandos SQL (SELECT, INSERT, UPDATE, DELETE).
 
+Função:
 
-### Repository(Repository) 
+Executar queries SQL
 
-É a camada responsavel de conversa com Banco de dados
+Converter resultados em objetos (Model)
 
-Ela utiliza DbContextDapper para exercutar comando SQL
+Manter o acesso a dados separado da lógica de negócio
 
+Exemplo:
 
-Função 
-
-Função select, insert, update, e delete;
-
-Converter os resultado sql em objetos model;
-
+csharp
+Copiar código
 using Dapper;
 
 public class UsuarioRepository
@@ -98,22 +100,25 @@ public class UsuarioRepository
         return connection.Execute(sql, user);
     }
 }
+?? Service
+O que é:
+Camada intermediária entre a Controller e o Repository.
+É responsável por conter as regras de negócio e validações.
 
+Função:
 
-### Service 
+Validar dados
 
-Service é a camada responsavel intermediária entre Controller é o repository 
+Processar regras (cálculos, verificações, duplicidades)
 
-Função 
+Chamar o repositório
 
-- Validar dados.
-- Processadores regras(calcular, verificar duplicidades(Duplicatos) ).
-- Chamar o repository.
-- Garantir que é Controller só lhe requisições, não com logicas não pesadas.
+Garantir que a Controller lide apenas com requisições
 
+Exemplo:
 
-
-
+csharp
+Copiar código
 public class UsuarioService
 {
     private readonly UsuarioRepository _repository;
@@ -137,23 +142,22 @@ public class UsuarioService
         return "Usuário cadastrado com sucesso!";
     }
 }
+?? Controller
+O que é:
+Ponto de entrada da API — recebe requisições HTTP do frontend (Angular) e retorna respostas.
 
+Função:
 
+Receber e responder requisições da Web (GET, POST, PUT, DELETE)
 
-### Controller 
+Chamar o Service
 
+Retornar resultados geralmente em JSON
 
-O que é 
+Exemplo:
 
-é o ponto de entrada de Api - Recebe requisições HTTP do frontend (Angula) e retorna respostas.
-
-
-Função 
-- Recebe e responde as requições da WEB (get, post, put, DELETE)
-- chama o service
-- retorna resultado geralmente em json
-
-
+csharp
+Copiar código
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -181,128 +185,49 @@ public class UsuarioController : ControllerBase
         return Ok(msg);
     }
 }
-
-
-
+?? Fluxo de Requisição
+css
+Copiar código
 [ Angular / Frontend ]
           ?
 [ Controller ]  ? recebe a requisição HTTP
           ?
-[ Service ]  ? regras de negócio, validações
+[ Service ]  ? contém regras de negócio e validações
           ?
 [ Repository ]  ? executa SQL no banco
           ?
 [ Database ]  ? cria e gerencia a conexão
           ?
-[ Model ]  ? estrutura dos dados
-
-
-
-####################################################################################
-
-
+[ Model ]  ? representa a estrutura dos dados
+??? Estrutura do Projeto
+mathematica
+Copiar código
 FinanblueBackend/
-?
-??? Connected Services/
-??? Dependencies/
-??? Properties/
-??? wwwroot/
-??? Pages/
-??? appsettings.json
-??? Program.cs
-??? Readme
+¦
++-- Connected Services/
++-- Dependencies/
++-- Properties/
++-- wwwroot/
++-- Pages/
++-- appsettings.json
++-- Program.cs
++-- Readme.md
+?? Descrição das Pastas e Arquivos
+Pasta / Arquivo	Função Principal
+Connected Services	Integração com serviços externos (Azure, APIs, etc).
+Dependencies	Bibliotecas NuGet do projeto.
+Properties	Configurações de execução (porta, ambiente, etc).
+wwwroot	Arquivos estáticos (imagens, CSS, JS).
+Pages	Páginas Razor (usadas em MVC, podem ser removidas se for apenas API).
+appsettings.json	Configurações e strings de conexão do sistema.
+Program.cs	Ponto de entrada e configuração do servidor.
+Readme.md	Documentação do projeto.
 
+?? Arquivo appsettings.json
+Configuração básica do sistema, equivalente ao .env de um projeto Node.js.
 
-
-1. Connected Services
-
-Essa seção serve para integrar o seu projeto com serviços externos, como:
-
-Azure (armazenamento, funções, SQL, etc.);
-
-APIs de terceiros;
-
-Entity Framework ou outros ORMs (quando você adiciona via assistente);
-
-Autenticação externa (ex: Microsoft Identity, OAuth).
-
-?? No seu caso, como você vai usar Dapper, geralmente não precisa adicionar nada aqui.
-
-
-?? 2. Dependencies
-
-Aqui ficam todas as dependências (bibliotecas) que o seu projeto usa.
-Elas são os “pacotes NuGet” — equivalentes aos “npm packages” no Node.js.
-
-Exemplos que podem aparecer:
-
-Microsoft.AspNetCore.* ? fornece recursos do ASP.NET.
-
-Dapper ? ORM leve para manipular SQL.
-
-System.Data.SqlClient ? conecta ao SQL Server.
-
-Swashbuckle.AspNetCore ? gera documentação Swagger.
-
-?? Você pode clicar com o botão direito ? “Gerenciar Pacotes NuGet” para instalar novas dependências.
-
-
-3. Properties
-
-Contém configurações do projeto.
-O principal arquivo aqui é o launchSettings.json, que define como a aplicação será executada durante o desenvolvimento.
-
-
-{
-  "profiles": {
-    "FinanblueBackend": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "https://localhost:7083;http://localhost:5189",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    }
-  }
-}
-
-
-
-?? 4. wwwroot/
-
-
-Essa pasta guarda arquivos estáticos públicos:
-
-Imagens, CSS, JS, PDFs etc.
-
-É útil se o seu backend também servir algum conteúdo web direto (como páginas HTML ou dashboards).
-Numa API pura (como a que vai falar com o Angular), geralmente fica vazia.
-
-
-5. Pages/
-
-
-Essa pasta aparece quando o projeto foi criado com o modelo de Razor Pages (páginas web dinâmicas).
-Como o seu foco é uma API REST, você não precisa dessa pasta — pode até remover mais tarde.
-
-?? Ela só é usada se você estiver criando uma aplicação web que renderiza HTML pelo servidor (ex: ASP.NET MVC).
-
-
-?? 6. appsettings.json
-
-Esse é o arquivo de configuração principal do projeto.
-Aqui ficam:
-
-Strings de conexão com o banco de dados;
-
-Configurações gerais da aplicação;
-
-Variáveis de ambiente.
-
-Exemplo:
-
-
+json
+Copiar código
 {
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost;Database=FinanblueDB;User Id=sa;Password=1234;"
@@ -314,30 +239,12 @@ Exemplo:
   },
   "AllowedHosts": "*"
 }
+?? Arquivo Program.cs
+Ponto de inicialização do backend.
+Aqui são configurados os serviços, middlewares e endpoints da API.
 
-
-Ele é o equivalente ao .env de um projeto Node.js.
-Você vai ler essas configurações com o IConfiguration dentro do seu código.
-
-
-?? 7. Program.cs
-
-Esse é o arquivo principal da aplicação (ponto de entrada).
-É aqui que o servidor é iniciado e as rotas (controllers) são registradas.
-
-Ele configura:
-
-CORS (para o Angular acessar);
-
-Injeção de dependência (Repository, Service);
-
-Rotas (MapControllers);
-
-Logs e middlewares.
-
-Exemplo básico:
-
-
+csharp
+Copiar código
 var builder = WebApplication.CreateBuilder(args);
 
 // Configura serviços
@@ -357,14 +264,32 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+?? Conclusão
+Essa arquitetura garante:
+
+Organização e separação de responsabilidades;
+
+Reuso e manutenção facilitada do código;
+
+Facilidade para escalar e adicionar novas funcionalidades;
+
+Integração direta e performática com SQL Server via Dapper.
+
+?? Autor: Gilson Fonseca
+?? Email: gilsonfonseca92@gmail.com
+?? GitHub: gildevson
+?? Empresa: Finanblue
+
+yaml
+Copiar código
+
+---
+
+Deseja que eu adicione um **diagrama visual (em ASCII ou mermaid)** mostrando o fluxo completo (Frontend ? Controller ? Service ? Repository ? Database ? SQL)?  
+Fica ótimo no README.
 
 
-Pasta / Arquivo	Função Principal
-Connected Services	Conectar a serviços externos (Azure, APIs, etc).
-Dependencies	Bibliotecas NuGet que o projeto usa.
-Properties	Configuração de execução (porta, ambiente, etc).
-wwwroot	Arquivos estáticos (imagens, CSS, JS).
-Pages	Páginas Razor (caso use interface MVC).
-appsettings.json	Configurações e conexões do sistema.
-Program.cs	Ponto de entrada e configuração do servidor.
-Readme	Documentação do projet
+
+
+
+
