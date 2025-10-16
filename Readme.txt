@@ -1,6 +1,6 @@
 # ?? FinanblueBackend
 
-Projeto backend desenvolvido em **C# (.NET 8)** utilizando **Dapper** como ORM, por questões de padronização dos projetos da **Finanblue**.
+Projeto backend desenvolvido em **C# (.NET 8)** utilizando **Dapper** como ORM, seguindo o padrão arquitetural adotado pela **Finanblue**.
 
 ---
 
@@ -14,7 +14,7 @@ Representa os dados do sistema. Reflete uma tabela do banco de dados ou um objet
 **Função:**  
 Guardar as propriedades e tipos de dados que o sistema usa.
 
-**Exemplo:**
+#### Exemplo:
 ```csharp
 public class Usuario 
 {
@@ -24,19 +24,18 @@ public class Usuario
 }
 ??? Database
 O que é:
-É a camada que faz a conexão direta com o banco de dados.
-Com o Dapper, ela serve para abrir conexões e executar queries.
+Camada responsável pela conexão direta com o banco de dados.
+No caso do Dapper, é usada para abrir conexões e executar queries SQL.
 
 Função:
 
-Gerenciar a conexão (abrir/fechar)
+Gerenciar a conexão (abrir/fechar);
 
-Centralizar a string de conexão
+Centralizar a string de conexão;
 
-Evitar repetição de código SQL
+Evitar repetir código SQL em vários lugares.
 
 Exemplo:
-
 csharp
 Copiar código
 using System.Data;
@@ -62,18 +61,17 @@ public class DbContextDapper
 ?? Repository
 O que é:
 Camada responsável por conversar com o banco de dados.
-Ela utiliza o DbContextDapper para executar comandos SQL (SELECT, INSERT, UPDATE, DELETE).
+Utiliza o DbContextDapper para executar comandos SQL.
 
 Função:
 
-Executar queries SQL
+Executar SELECT, INSERT, UPDATE e DELETE;
 
-Converter resultados em objetos (Model)
+Converter resultados SQL em objetos (Model);
 
-Manter o acesso a dados separado da lógica de negócio
+Manter o acesso a dados separado da lógica de negócio.
 
 Exemplo:
-
 csharp
 Copiar código
 using Dapper;
@@ -102,21 +100,20 @@ public class UsuarioRepository
 }
 ?? Service
 O que é:
-Camada intermediária entre a Controller e o Repository.
-É responsável por conter as regras de negócio e validações.
+Camada intermediária entre Controller e Repository.
+Contém as regras de negócio e validações do sistema.
 
 Função:
 
-Validar dados
+Validar dados;
 
-Processar regras (cálculos, verificações, duplicidades)
+Processar regras (cálculos, duplicidades, validações);
 
-Chamar o repositório
+Chamar o repositório;
 
-Garantir que a Controller lide apenas com requisições
+Garantir que a Controller trate apenas requisições.
 
 Exemplo:
-
 csharp
 Copiar código
 public class UsuarioService
@@ -144,18 +141,17 @@ public class UsuarioService
 }
 ?? Controller
 O que é:
-Ponto de entrada da API — recebe requisições HTTP do frontend (Angular) e retorna respostas.
+Ponto de entrada da API — recebe requisições HTTP do frontend (Angular) e retorna respostas JSON.
 
 Função:
 
-Receber e responder requisições da Web (GET, POST, PUT, DELETE)
+Receber e responder requisições da Web (GET, POST, PUT, DELETE);
 
-Chamar o Service
+Chamar o Service;
 
-Retornar resultados geralmente em JSON
+Retornar o resultado para o frontend.
 
 Exemplo:
-
 csharp
 Copiar código
 using Microsoft.AspNetCore.Mvc;
@@ -214,18 +210,20 @@ FinanblueBackend/
 +-- Readme.md
 ?? Descrição das Pastas e Arquivos
 Pasta / Arquivo	Função Principal
-Connected Services	Integração com serviços externos (Azure, APIs, etc).
-Dependencies	Bibliotecas NuGet do projeto.
-Properties	Configurações de execução (porta, ambiente, etc).
-wwwroot	Arquivos estáticos (imagens, CSS, JS).
+Connected Services	Conectar o projeto a serviços externos (Azure, APIs, etc).
+Dependencies	Gerencia as bibliotecas NuGet do projeto.
+Properties	Contém as configurações de execução (porta, ambiente, etc).
+wwwroot	Armazena arquivos estáticos (imagens, CSS, JS).
 Pages	Páginas Razor (usadas em MVC, podem ser removidas se for apenas API).
-appsettings.json	Configurações e strings de conexão do sistema.
+appsettings.json	Configurações gerais e conexões do sistema.
 Program.cs	Ponto de entrada e configuração do servidor.
 Readme.md	Documentação do projeto.
 
 ?? Arquivo appsettings.json
-Configuração básica do sistema, equivalente ao .env de um projeto Node.js.
+Contém as configurações e a string de conexão com o banco de dados.
+Equivale ao .env em um projeto Node.js.
 
+Exemplo:
 json
 Copiar código
 {
@@ -243,6 +241,7 @@ Copiar código
 Ponto de inicialização do backend.
 Aqui são configurados os serviços, middlewares e endpoints da API.
 
+Exemplo:
 csharp
 Copiar código
 var builder = WebApplication.CreateBuilder(args);
@@ -267,15 +266,18 @@ app.Run();
 ?? Conclusão
 Essa arquitetura garante:
 
-Organização e separação de responsabilidades;
+Separação clara de responsabilidades;
 
-Reuso e manutenção facilitada do código;
+Organização e reuso de código;
 
-Facilidade para escalar e adicionar novas funcionalidades;
+Facilidade de manutenção e escalabilidade;
 
-Integração direta e performática com SQL Server via Dapper.
+Integração direta com SQL Server usando Dapper;
 
-?? Autor: Gilson Fonseca
+Padrão de desenvolvimento adotado pela Finanblue.
+
+????? Autor
+Gilson Fonseca
 ?? Email: gilsonfonseca92@gmail.com
 ?? GitHub: gildevson
 ?? Empresa: Finanblue
@@ -285,11 +287,5 @@ Copiar código
 
 ---
 
-Deseja que eu adicione um **diagrama visual (em ASCII ou mermaid)** mostrando o fluxo completo (Frontend ? Controller ? Service ? Repository ? Database ? SQL)?  
-Fica ótimo no README.
-
-
-
-
-
-
+Quer que eu te gere **uma versão com diagrama visual em Mermaid** (para o GitHub mostrar o fluxo graficamente)?  
+Fica muito profissional no README, mostrando a ligação entre as camadas (Controller ? Service ? Repos
