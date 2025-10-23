@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "ContainingType": "FinanblueBackend.Controllers.TesteController",
+    "Method": "TestarConexao",
+    "RelativePath": "api/Teste/conexao",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FinanblueBackend.Controllers.TesteController",
+    "Method": "GetUsuarios",
+    "RelativePath": "api/Teste/usuarios",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
