@@ -1,6 +1,6 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+﻿using System.Data; //→ contém interfaces e tipos básicos de acesso a dados.
+using System.Data.SqlClient; //permite conectar ao **SQL Server**.
+using Microsoft.Extensions.Configuration; //serve para **ler configurações** do `appsettings.json`, como a string de conexão.
 
 namespace FinanblueBackend.Data
 {
