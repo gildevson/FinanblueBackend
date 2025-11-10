@@ -5,14 +5,20 @@ using FinanblueBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanblueBackend.Controllers {
-    public class UserController {
+
+
         [ApiController]
         [Route("api/controller")]
+        public class UserController : ControllerBase 
+        {
+               private readonly DbContextDapper _dapper;
 
-        public class UsersController : ControllerBase { 
-        
-        
+              public UserController(DbContextDapper Dapper) {
+
+              _dapper = Dapper;
         }
+
+
 
     }
 }
