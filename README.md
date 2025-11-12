@@ -43,7 +43,7 @@ FinanblueBackend/
 ├── README.md
 └── appsettings.json
 
----
+```
 
 ## 🧩 Descrição das Pastas
 
@@ -141,6 +141,7 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 ---
 
 ## 📂 Estrutura Geral
+
 
 
 
