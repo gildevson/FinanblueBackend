@@ -4,8 +4,6 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 
 ---
 
-## 📂 Estrutura Geral
-
 ```text
 FinanblueBackend/
 ├── Controllers/
@@ -135,6 +133,7 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 ---
 
 ## 📂 Estrutura Geral
+
 
 
 
