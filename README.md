@@ -6,7 +6,7 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 
 ## 📂 Estrutura Geral
 
-
+```text
 FinanblueBackend/
 ├── Controllers/
 │ ├── TesteController.cs
@@ -127,3 +127,4 @@ Para rodar localmente:
 dotnet restore
 dotnet build
 dotnet run
+
