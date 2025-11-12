@@ -22,3 +22,4 @@ Esta estrutura segue um padrão de organização de código comum para aplicaç�
 ├── README.md
 └── appsettings.json
 
+2. 📁 Detalhamento de Pastas e Arquivos
