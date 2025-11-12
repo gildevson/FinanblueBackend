@@ -4,39 +4,44 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 
 ---
 
+# 🧱 Estrutura de Pastas — FinanblueBackend
+
+Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvido em **.NET**, com uso do **Dapper** para acesso a banco de dados e organização modular em camadas.
+
+---
+
 ## 📂 Estrutura Geral
 
 ```text
 FinanblueBackend/
 ├── Controllers/
-│ ├── TesteController.cs
-│ └── UserController.cs
+│   ├── TesteController.cs
+│   └── UserController.cs
 │
 ├── Data/
-│ └── DbContextDapper.cs
+│   └── DbContextDapper.cs
 │
 ├── Models/
-│ └── Usuario.cs
+│   └── Usuario.cs
 │
 ├── Pages/
 │
 ├── Properties/
-│ ├── launchSettings.json
-│ ├── serviceDependencies.json
-│ └── serviceDependencies.local.json
+│   ├── launchSettings.json
+│   ├── serviceDependencies.json
+│   └── serviceDependencies.local.json
 │
 ├── wwwroot/
-│ ├── css/
-│ ├── js/
-│ ├── lib/
-│ └── favicon.ico
+│   ├── css/
+│   ├── js/
+│   ├── lib/
+│   └── favicon.ico
 │
 ├── .gitignore
 ├── FinanblueBackend.csproj
 ├── Program.cs
 ├── README.md
 └── appsettings.json
-
 
 ---
 
@@ -136,5 +141,6 @@ Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvid
 ---
 
 ## 📂 Estrutura Geral
+
 
 
