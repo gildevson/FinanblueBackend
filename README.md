@@ -129,4 +129,12 @@ dotnet build
 dotnet run
 
 ---
+# 🧱 Estrutura de Pastas — FinanblueBackend
+
+Este documento descreve a estrutura do projeto **FinanblueBackend**, desenvolvido em **.NET**, com uso do **Dapper** para acesso a banco de dados e organização modular em camadas.
+
+---
+
+## 📂 Estrutura Geral
+
 
