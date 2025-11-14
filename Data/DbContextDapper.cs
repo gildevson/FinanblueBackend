@@ -12,7 +12,8 @@ namespace FinanblueBackend.Data
         public DbContextDapper(IConfiguration config)
         {
             _config = config;
-            _connectionString = _config.GetConnectionString("DefaultConnection");
+            //_connectionString = _config.GetConnectionString("DefaultConnection");
+            _connectionString = _config.GetConnectionString("ConnectionWork");
         }
 
         public IDbConnection CreateConnection()
